@@ -51,3 +51,18 @@ class Value:
         
         out._backward = _backward
         return out
+    
+    def backaward(self):
+        topo = []
+        visited = set()
+
+        def topo_sort(node):
+            visited.add(node)
+            for next in node._prev:
+                if next not in visited:
+                    topo_sort(next)
+            topo.append(node)
+        topo_sort(self)
+        self.grad(1.0)
+        for node in reversed(topo):
+            node._backward()
