@@ -11,6 +11,7 @@ class Value:
         return f"Value(data={self.data})"
     
     def __add__(self,other):
+        other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data+other.data,(self,other),'+')
         def _backward():
             self.grad += 1.0*out.grad
@@ -19,7 +20,9 @@ class Value:
         return out
     
     def __sub__ (self,other):
+        other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data-other.data,(self,other),'-')
+        
         def _backward():
             self.grad += 1.0*out.grad
             other.grad += (-1.0)*out.grad
@@ -27,7 +30,9 @@ class Value:
          
         return out
     def __mul__ (self,other):
+        other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data*other.data,(self,other),'*')
+
         def _backward():
             self.grad += other.data * out.grad
             other.grad += self.data * out.grad
@@ -35,12 +40,25 @@ class Value:
         return out
     
     def __truediv__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data/other.data,(self,other),'/')
+
         def _backward():
             self.grad += (1.0/other.data)* out.grad
             other.grad += (-1.0*(self.data/math.sqrt(other.data)))*out.grad
         out._backward = _backward
         return out
+    
+    def __pow__(self,other):
+        other = other if isinstance(other,Value) else Value(other)
+        out = Value(self.data**other.data,(self,other),'**')
+
+        def _backward():
+            self.grad +=  (other.data)*((self.data)**(other-1))*out.grad
+            
+        out._backward = _backward
+        return out
+
     
     def tanh(self):
         x= (math.exp(2*self.data)-1.0)/(math.exp(2*self.data)+1.0)
