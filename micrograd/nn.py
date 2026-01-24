@@ -10,5 +10,13 @@ class Neuron:
         out = act.tanh()
         return out
 
+class Layer:
+    def __init__(self,ninpunts, noutputs):
+        self.neurons = [Neuron(ninpunts) for _ in range(noutputs)]
 
+    def __call__(self, x):
+        outs = [n(x) for n in self.neurons]
+        return outs
+        
+        
 
