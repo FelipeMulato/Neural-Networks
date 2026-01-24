@@ -19,4 +19,13 @@ class Layer:
         return outs
         
         
+class MLP:
+    def __init__(self,ninputs,noutputs):
+        sz = [ninputs] + noutputs
+        self.layers = [Layer(sz[i],sz[i+1]) for i in range(len(sz)-1)]
 
+    def __call__(self,x):
+        for layer in self.layers:
+            x = layer(x)
+        return x
+        
