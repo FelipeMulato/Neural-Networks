@@ -63,6 +63,6 @@ class Value:
                     topo_sort(next)
             topo.append(node)
         topo_sort(self)
-        self.grad(1.0)
+        self.grad =1.0
         for node in reversed(topo):
             node._backward()
